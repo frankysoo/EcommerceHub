@@ -1,0 +1,25 @@
+{
+  "name": "EcommerceHub",
+  "version": "1.0.0",
+  "description": "Personal e-commerce platform development configuration",
+  "author": "Franky Soo",
+  "scripts": {
+    "dev": "npm run dev",
+    "build": "npm run build",
+    "start": "npm run start"
+  },
+  "ports": {
+    "main": 5000
+  },
+  "hidden": [
+    ".config",
+    ".git",
+    "generated-icon.png",
+    "node_modules",
+    "dist"
+  ],
+  "environment": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
