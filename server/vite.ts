@@ -1,4 +1,4 @@
-import { Express } from "express";
+import express, { Express } from "express";
 import { createServer } from "vite";
 import path from "path";
 import fs from "fs";
@@ -39,21 +39,20 @@ export async function setupVite(app: Express) {
   });
 }
 
-export function serveStatic(req: any, res: any, next: any) {
+export function serveStatic(app: Express) {
   const staticPath = path.resolve("client/dist");
-  const filePath = path.join(staticPath, req.url);
 
-  // If the file exists, serve it
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    return res.sendFile(filePath);
-  }
+  app.use(express.static(staticPath));
 
-  // Otherwise, serve the index.html for client-side routing
-  if (!req.url.startsWith("/api")) {
-    return res.sendFile(path.join(staticPath, "index.html"));
-  }
+  app.use("*", (req, res, next) => {
+    // If the request is for an API route, skip
+    if (req.originalUrl.startsWith("/api")) {
+      return next();
+    }
 
-  next();
+    // Otherwise, serve the index.html for client-side routing
+    res.sendFile(path.join(staticPath, "index.html"));
+  });
 }
 
 export function log(message: string) {

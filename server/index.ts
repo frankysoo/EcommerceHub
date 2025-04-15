@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { log } from "./vite";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
@@ -194,9 +194,25 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    // Serve static files from client/dist
+    app.use(express.static(path.resolve("client/dist")));
+
+    // For all other routes, serve the index.html
+    app.get("*", (req, res) => {
+      if (!req.originalUrl.startsWith("/api")) {
+        res.sendFile(path.resolve("client/dist/index.html"));
+      }
+    });
   } else {
-    serveStatic(app);
+    // Serve static files from client/dist
+    app.use(express.static(path.resolve("client/dist")));
+
+    // For all other routes, serve the index.html
+    app.get("*", (req, res) => {
+      if (!req.originalUrl.startsWith("/api")) {
+        res.sendFile(path.resolve("client/dist/index.html"));
+      }
+    });
   }
 
   // ALWAYS serve the app on port 5000
